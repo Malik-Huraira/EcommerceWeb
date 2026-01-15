@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+    <!-- Crown Icon -->
+    <g transform="translate(10, 10)">
+        <path d="M4 35L7 15L15 22L22 6L29 22L37 15L40 35H4Z" fill="#d97706" stroke="#f59e0b"
+            stroke-width="2" stroke-linejoin="round" />
+        <circle cx="22" cy="10" r="3" fill="#fbbf24" />
+        <circle cx="7" cy="18" r="2" fill="#fbbf24" />
+        <circle cx="37" cy="18" r="2" fill="#fbbf24" />
+    </g>
+    <!-- Text -->
+    <text x="60" y="38" font-family="system-ui, -apple-system, sans-serif" font-size="24"
+        font-weight="700">
+        <tspan fill="#d97706">Royal</tspan>
+        <tspan fill="#1a1a1a"> Mart</tspan>
+    </text>
+</svg>
