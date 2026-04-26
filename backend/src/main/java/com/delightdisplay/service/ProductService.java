@@ -24,41 +24,112 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
+    @Transactional(readOnly = true)
     public Page<ProductDto> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable).map(ProductDto::fromEntity);
+        return productRepository.findAll(pageable).map(product -> {
+            // Force load lazy collections within transaction
+            if (product.getCategory() != null) {
+                product.getCategory().getName();
+            }
+            if (product.getImages() != null) {
+                product.getImages().size();
+            }
+            if (product.getTags() != null) {
+                product.getTags().size();
+            }
+            return ProductDto.fromEntity(product);
+        });
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductDto> searchProducts(
             String name, Long categoryId, String category, BigDecimal minPrice, BigDecimal maxPrice,
             Boolean inStock, Boolean featured, Boolean isNew, Pageable pageable) {
         // If no filters provided, use simple findAll for better performance
         if (name == null && categoryId == null && category == null && minPrice == null &&
                 maxPrice == null && inStock == null && featured == null && isNew == null) {
-            return productRepository.findAll(pageable).map(ProductDto::fromEntity);
+            return productRepository.findAll(pageable).map(product -> {
+                if (product.getCategory() != null) {
+                    product.getCategory().getName();
+                }
+                if (product.getImages() != null) {
+                    product.getImages().size();
+                }
+                if (product.getTags() != null) {
+                    product.getTags().size();
+                }
+                return ProductDto.fromEntity(product);
+            });
         }
         return productRepository
                 .findWithFilters(name, categoryId, category, minPrice, maxPrice, inStock, featured, isNew, pageable)
-                .map(ProductDto::fromEntity);
+                .map(product -> {
+                    if (product.getCategory() != null) {
+                        product.getCategory().getName();
+                    }
+                    if (product.getImages() != null) {
+                        product.getImages().size();
+                    }
+                    if (product.getTags() != null) {
+                        product.getTags().size();
+                    }
+                    return ProductDto.fromEntity(product);
+                });
     }
 
+    @Transactional(readOnly = true)
     public ProductDto getProductById(String id) {
         Long productId = Long.parseLong(id);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        // Force load lazy collections
+        if (product.getCategory() != null) {
+            product.getCategory().getName();
+        }
+        if (product.getImages() != null) {
+            product.getImages().size();
+        }
+        if (product.getTags() != null) {
+            product.getTags().size();
+        }
         return ProductDto.fromEntity(product);
     }
 
     @Cacheable(value = "featuredProducts")
+    @Transactional(readOnly = true)
     public List<ProductDto> getFeaturedProducts() {
         return productRepository.findByFeaturedTrue().stream()
-                .map(ProductDto::fromEntity)
+                .map(product -> {
+                    if (product.getCategory() != null) {
+                        product.getCategory().getName();
+                    }
+                    if (product.getImages() != null) {
+                        product.getImages().size();
+                    }
+                    if (product.getTags() != null) {
+                        product.getTags().size();
+                    }
+                    return ProductDto.fromEntity(product);
+                })
                 .collect(Collectors.toList());
     }
 
     @Cacheable(value = "newProducts")
+    @Transactional(readOnly = true)
     public List<ProductDto> getNewProducts() {
         return productRepository.findByIsNewTrue().stream()
-                .map(ProductDto::fromEntity)
+                .map(product -> {
+                    if (product.getCategory() != null) {
+                        product.getCategory().getName();
+                    }
+                    if (product.getImages() != null) {
+                        product.getImages().size();
+                    }
+                    if (product.getTags() != null) {
+                        product.getTags().size();
+                    }
+                    return ProductDto.fromEntity(product);
+                })
                 .collect(Collectors.toList());
     }
 

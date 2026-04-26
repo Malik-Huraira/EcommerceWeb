@@ -125,7 +125,7 @@ public class OrderService {
     @Transactional
     public OrderDto updateOrderStatus(String id, Order.OrderStatus status) {
         Long orderId = Long.parseLong(id);
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithUser(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         order.setStatus(status);
         order = orderRepository.save(order);

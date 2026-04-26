@@ -18,16 +18,28 @@ import java.util.stream.Collectors;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "categories")
     public List<CategoryDto> getAllCategories() {
         return categoryRepository.findAll().stream()
-                .map(CategoryDto::fromEntity)
+                .map(category -> {
+                    // Force load products collection within transaction
+                    if (category.getProducts() != null) {
+                        category.getProducts().size();
+                    }
+                    return CategoryDto.fromEntity(category);
+                })
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public CategoryDto getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        // Force load products collection within transaction
+        if (category.getProducts() != null) {
+            category.getProducts().size();
+        }
         return CategoryDto.fromEntity(category);
     }
 
